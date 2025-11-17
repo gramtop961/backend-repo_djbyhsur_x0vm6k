@@ -11,10 +11,10 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, Literal
 
-# Example schemas (replace with your own):
+# Example schemas (keep for reference):
 
 class User(BaseModel):
     """
@@ -38,11 +38,33 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Crypto Recovery specific schema
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class RecoveryRequest(BaseModel):
+    """
+    Recovery requests for lost/compromised crypto assets
+    Collection name: "recoveryrequest"
+    """
+    vorname_nachname: str = Field(..., description="Vollständiger Name")
+    email: EmailStr = Field(..., description="E-Mail-Adresse")
+    kontaktweg: Literal["E-Mail", "Telefon", "Telegram", "Signal", "WhatsApp"] = Field(
+        "E-Mail", description="Bevorzugter Kontaktweg"
+    )
+    telefon_oder_handle: Optional[str] = Field(None, description="Telefonnummer oder Handle je nach Kontaktweg")
+    wallet_typ: Literal["Hardware", "Software", "Custodial", "Seed Phrase", "Sonstiges"] = Field(
+        ..., description="Art des Wallets"
+    )
+    netzwerk: Optional[str] = Field(None, description="Blockchain/Netzwerk (z. B. Bitcoin, Ethereum, Solana)")
+    betroffene_assets: Optional[str] = Field(None, description="Betroffene Coins/Tokens")
+    vorfall_typ: Literal[
+        "Verlorener Zugriff",
+        "Phishing/Hack",
+        "Fehlerhafte Transaktion",
+        "Beschädigte Hardware",
+        "Unbekannt"
+    ] = Field(..., description="Art des Vorfalls")
+    transaktionshash: Optional[str] = Field(None, description="Optionaler Transaktionshash/ID")
+    betrag_oder_wert: Optional[str] = Field(None, description="Geschätzter Betrag/Wert")
+    beschreibung: str = Field(..., description="Kurze Beschreibung des Vorfalls")
+    dringlichkeit: Literal["Niedrig", "Mittel", "Hoch", "Kritisch"] = Field("Mittel", description="Dringlichkeit")
+    datenschutz_einwilligung: bool = Field(..., description="Einwilligung in Datenverarbeitung gemäß Datenschutzerklärung")
