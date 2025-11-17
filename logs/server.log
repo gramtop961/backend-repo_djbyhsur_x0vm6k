@@ -4,3 +4,4 @@ INFO:     Started reloader process [228] using StatReload
 INFO:     Started server process [230]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
+INFO:     172.20.0.1:50996 - "HEAD / HTTP/1.1" 405 Method Not Allowed
